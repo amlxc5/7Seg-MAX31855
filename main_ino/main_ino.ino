@@ -6,7 +6,18 @@
  
  7-segment commands can be found on Sparkfun's wiki: https://github.com/sparkfun/Serial7SegmentDisplay/wiki/Special-Commands
  
-  
+ The display supports 3 decimal LEDs. this work s out great for my 
+ application since the temp reading from the MAX31855 is a double. 
+ I can represent the decimal place for the float (double).
+ The command sequence for sending the value should be:
+ 1) Send 0x76 to clear the screen
+ 2) Send 0c71 to enter decimal control mode
+ 3) If  (0x00000000 
+ 
+ As the temp gets larger we will only care about 4 or less significant digits. Why? That's all the display can handle silly!
+ Okay, so we need to write out a method for finding how many sigfigs we have. The temp will be a double. *I think I can change that*. 
+ Totally assuming here, the max value we will be seeing in that double is "1350.00". This is the max value supported by a K-type thermocouple. 
+ I'll need to check the datasheet for the max31855 and see what happens if the value of the thermocouple is a higher than that? does it cap off , throw an error?
  ****************************************************/
 
 #include "Adafruit_MAX31855.h"
