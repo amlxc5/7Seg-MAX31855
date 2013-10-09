@@ -36,8 +36,14 @@ void setup() {
   // wait for MAX chip to stabilize
   Wire.beginTransmission(DISPLAY_ADDRESS1);
   Wire.write('v');
+  // ... after initializing Serial at the correct baud rate...  
+  Wire.write(0x76);  // Clear display command, resets cursor
+  Wire.write(0x01);  // Hex value for 1, will display '1'
+  Wire.write('2');   // ASCII value for '2', will display '2'
+  Wire.write(0x0A);  // Hex value for 10, will display 'A'
+  Wire.write('B');   // ASCII value for 'B', will display 'b'
   Wire.endTransmission();
-  delay(500);
+  delay(2000);
 }
 
 void loop() {
@@ -45,42 +51,27 @@ void loop() {
    Serial.print("Internal Temp = ");
    Serial.println(thermocouple.readInternal());
 
-   double F = thermocouple.readFarenheit();
-   if (isnan(c)) {
+   double F = thermocouple.readFarenheit(); //Grab data from MAX31855
+   
+   if (isnan(F)) {
      i2cSendError();
    } else {
-     i2cSendValue(c);
+     i2cSendValue((float)F);
      }
-   
- 
-   delay(1000);
+  delay(1000);
 }
 
-void i2cSendValue()
+void i2cSendError()
 {
  Wire.beginTransmission(DISPLAY_ADDRESS1); //transmit to device #1
  Wire.write("v"); //Clear the display screen with command code 0x76
- }
-
-void i2cSendValue(int tempTransmission)
-{
-  Wire.beginTransmission(DISPLAY_ADDRESS1); // transmit to device #1
-  Wire.write(tempCycles / 1000); //Send the left most digit
-  tempCycles %= 1000; //Now remove the left most digit from the number we want to display
-  Wire.write(tempCycles / 100);
-  tempCycles %= 100;
-  Wire.write(tempCycles / 10);
-  tempCycles %= 10;
-  Wire.write(tempCycles); //Send the right most digit
-  Wire.endTransmission(); //Stop I2C transmission
 }
 
-void Serial7::print(float value)
+void i2cSendValue(float value)
 {
   int output = 0;
-  
-  // decimal point control character
-  Wire.write(0x77);
+  Wire.beginTransmission(DISPLAY_ADDRESS1);
+  Wire.write(0x77); // decimal point control character
   
   // switch depending on value
   if(value < 10) {
@@ -105,4 +96,6 @@ void Serial7::print(float value)
   Wire.print(output/100 % 10, HEX);
   Wire.print(output/10 % 10, HEX);
   Wire.print(output % 10, HEX);
+  
+  Wire.endTransmission();
 }
