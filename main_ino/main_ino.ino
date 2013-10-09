@@ -11,7 +11,7 @@
  I can represent the decimal place for the float (double).
  The command sequence for sending the value should be:
  1) Send 0x76 to clear the screen
- 2) Send 0c71 to enter decimal control mode
+ 2) Send 0x71 to enter decimal control mode
  3) If  (0x00000000 
  
  As the temp gets larger we will only care about 4 or less significant digits. Why? That's all the display can handle silly!
@@ -73,4 +73,36 @@ void i2cSendValue(int tempTransmission)
   tempCycles %= 10;
   Wire.write(tempCycles); //Send the right most digit
   Wire.endTransmission(); //Stop I2C transmission
+}
+
+void Serial7::print(float value)
+{
+  int output = 0;
+  
+  // decimal point control character
+  Wire.write(0x77);
+  
+  // switch depending on value
+  if(value < 10) {
+    Wire.write(0x01);
+    output = value*1000;
+  }
+  else if(value < 100) {
+    Wire.write(0x02);
+    output = value*100;
+  }
+  else if(value < 100) {
+    Wire.write(0x04);
+    output = value*10;
+  }
+  else {
+    Wire.write(0x08);
+	output = value;
+  }
+  
+  // output four least significant bits
+  Wire.print(output/1000 % 10, HEX);
+  Wire.print(output/100 % 10, HEX);
+  Wire.print(output/10 % 10, HEX);
+  Wire.print(output % 10, HEX);
 }
