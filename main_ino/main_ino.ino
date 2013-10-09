@@ -1,17 +1,12 @@
 /*************************************************** 
-  This is an example for the Adafruit Thermocouple Sensor w/MAX31855K
-
-  Designed specifically to work with the Adafruit Thermocouple Sensor
-  ----> https://www.adafruit.com/products/269
-
-  These displays use SPI to communicate, 3 pins are required to  
-  interface
-  Adafruit invests time and resources providing this open source code, 
-  please support Adafruit and open-source hardware by purchasing 
-  products from Adafruit!
-
-  Written by Limor Fried/Ladyada for Adafruit Industries.  
-  BSD license, all text above must be included in any redistribution
+ This is an example of reading data from a thermocouple amplifier and displaying it on a 4 digit 7-segment display.
+ 
+ There is a Adafruit MAX31855 Breakout wired to a Arduino Nano via SPI.
+ There is a Sparkfun 7-segment serial display wired via I2C with an address of 0x71. 
+ 
+ 7-segment commands can be found on Sparkfun's wiki: https://github.com/sparkfun/Serial7SegmentDisplay/wiki/Special-Commands
+ 
+  
  ****************************************************/
 
 #include "Adafruit_MAX31855.h"
@@ -53,7 +48,7 @@ void loop() {
 void i2cSendValue()
 {
  Wire.beginTransmission(DISPLAY_ADDRESS1); //transmit to device #1
- Wire.
+ Wire.write("v"); //Clear the display screen with command code 0x76
  }
 
 void i2cSendValue(int tempTransmission)
