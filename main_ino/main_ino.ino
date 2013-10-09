@@ -33,18 +33,19 @@ void setup() {
   Serial.begin(9600);
   Wire.begin(); //Join the bus as master
   Serial.println("MAX31855 test");
-  // wait for MAX chip to stabilize
+  
   Wire.beginTransmission(DISPLAY_ADDRESS1);
   Wire.write('v');
   Wire.endTransmission();
-  delay(500);
+  delay(500); // Wait for MAX chip to stabilize
 }
 
 void loop() {
-  // basic readout test, just print the current temp
+  /*
+   //Use this code for debuging while connected to the computer.
    Serial.print("Internal Temp = ");
    Serial.println(thermocouple.readInternal());
-
+  */
    double F = thermocouple.readFarenheit();
    if (isnan(c)) {
      i2cSendError();
